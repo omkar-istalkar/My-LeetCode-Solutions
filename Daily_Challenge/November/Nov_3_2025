@@ -1,0 +1,21 @@
+class Solution:
+    def minCost(self, colors: str, neededTime: List[int]) -> int:
+        l1 = len(colors)
+        out = 0
+        Prev, Curr = 0, 1
+        
+        while Curr < l1:
+            
+            if colors[Prev] == colors[Curr]:
+                # Add the smaller time to total
+                out += min(neededTime[Prev], neededTime[Curr])
+                
+                # Keep the one with the larger neededTime
+                if neededTime[Curr] > neededTime[Prev]:
+                    Prev = Curr
+                Curr += 1
+            else:
+                Prev = Curr
+                Curr += 1
+                
+        return out
