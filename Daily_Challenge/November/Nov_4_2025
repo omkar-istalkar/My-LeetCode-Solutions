@@ -1,0 +1,22 @@
+from collections import Counter
+from typing import List
+
+class Solution:
+    def findXSum(self, nums: List[int], k: int, x: int) -> List[int]:
+        n = len(nums)
+        ans = []
+
+        for i in range(n - k + 1):
+            window = nums[i:i + k]
+
+            freq = Counter(window)
+
+            sorted_items = sorted(freq.items(), key=lambda item: (-item[1], -item[0]))
+
+            top_x = {num for num, _ in sorted_items[:x]}
+
+            total = sum(num for num in window if num in top_x)
+
+            ans.append(total)
+
+        return ans
