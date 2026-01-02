@@ -1,0 +1,29 @@
+___Python3___
+class Solution:
+    def repeatedNTimes(self, nums: List[int]) -> int:
+        out = []
+        out.append(nums[0])
+        l1 = len(nums)
+        for x in range(1,l1):
+            if nums[x] in out:
+                return nums[x]
+            out.append(nums[x])
+
+
+___Java___
+class Solution {
+    public int repeatedNTimes(int[] nums) 
+    {
+        Map <Integer, Integer> ele = new HashMap<>();
+        ele.put(nums[0],1);
+        for(int i = 1; i < nums.length; i++)
+        {
+            if(ele.containsKey(nums[i]))
+            {
+                return nums[i];
+            }
+            ele.put(nums[i],1);
+        }
+        return 0;
+    }
+}
