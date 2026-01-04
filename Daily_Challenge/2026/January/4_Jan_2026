@@ -1,0 +1,26 @@
+class Solution:
+    def sumFourDivisors(self, nums: List[int]) -> int:
+        out = 0
+
+        for x in nums:
+            div = 0
+            cSum = 0
+            i = 1
+
+            while i * i <= x:
+                if x % i == 0:
+                    if i == x // i:
+                        div += 1
+                        cSum += i
+                    else:
+                        div += 2
+                        cSum += i + (x // i)
+
+                    if div > 4:
+                        break
+                i += 1
+
+            if div == 4:
+                out += cSum
+
+        return out
