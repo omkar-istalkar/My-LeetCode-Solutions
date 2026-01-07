@@ -1,0 +1,23 @@
+class Solution:
+    def maxProduct(self, root: Optional[TreeNode]) -> int:
+        MOD = 10 ** 9 + 7
+        sums = []
+
+        def treeSum(node):
+            if node is None:
+                return 0
+            
+            leftSum = treeSum(node.left)
+            rightSum = treeSum(node.right)
+
+            s = node.val + leftSum + rightSum
+            sums.append(s)
+            return s
+        
+        totalSum = treeSum(root)
+        out = 0
+
+        for s in sums:
+            out = max(out, s * (totalSum - s))
+        
+        return out % MOD
