@@ -1,0 +1,28 @@
+class Solution:
+    def subtreeWithAllDeepest(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        depth = {None: -1}
+
+        def dfs(node, parent=None):
+            if not node:
+                return
+            depth[node] = depth[parent] + 1
+            dfs(node.left, node)
+            dfs(node.right, node)
+
+        dfs(root)
+        maxDepth = max(depth.values())
+
+        def answer(node):
+            if not node:
+                return None
+            if depth[node] == maxDepth:
+                return node
+
+            L = answer(node.left)
+            R = answer(node.right)
+
+            if L and R:
+                return node
+            return L or R
+
+        return answer(root)
