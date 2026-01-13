@@ -1,0 +1,28 @@
+class Solution:
+    def separateSquares(self, squares: List[List[int]]) -> float:
+        total_area = 0.0
+        maxY = 0.0
+        
+        for x, y, side in squares:
+            total_area += side * side
+            maxY = max(maxY, y + side)
+
+        def area_below(limitY: float) -> float:
+            area = 0.0
+            for x, y, side in squares:
+                if limitY > y:
+                    height = min(limitY - y, side)
+                    area += height * side
+            return area
+
+        lo, hi = 0.0, maxY
+        eps = 1e-5
+
+        while hi - lo > eps:
+            mid = (lo + hi) / 2
+            if area_below(mid) >= total_area / 2:
+                hi = mid
+            else:
+                lo = mid
+
+        return hi
