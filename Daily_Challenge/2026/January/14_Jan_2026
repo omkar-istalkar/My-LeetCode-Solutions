@@ -1,0 +1,76 @@
+from typing import List
+
+
+class SegmentTree:
+    def __init__(self, xs: List[int]):
+        self.xs = xs
+        self.n = len(xs) - 1
+        self.count = [0] * (4 * self.n)
+        self.covered = [0] * (4 * self.n)
+
+    def update(self, ql, qr, l, r, val, idx):
+        if qr <= self.xs[l] or ql >= self.xs[r + 1]:
+            return
+
+        if ql <= self.xs[l] and qr >= self.xs[r + 1]:
+            self.count[idx] += val
+        else:
+            mid = (l + r) // 2
+            self.update(ql, qr, l, mid, val, idx * 2 + 1)
+            self.update(ql, qr, mid + 1, r, val, idx * 2 + 2)
+
+        if self.count[idx] > 0:
+            self.covered[idx] = self.xs[r + 1] - self.xs[l]
+        elif l == r:
+            self.covered[idx] = 0
+        else:
+            self.covered[idx] = (
+                self.covered[idx * 2 + 1] + self.covered[idx * 2 + 2]
+            )
+
+
+class Solution:
+    def separateSquares(self, squares: List[List[int]]) -> float:
+        events = []
+        xs = set()
+
+        # Build sweep events
+        for x, y, l in squares:
+            events.append((y, 1, x, x + l))       # square enters
+            events.append((y + l, -1, x, x + l))  # square leaves
+            xs.add(x)
+            xs.add(x + l)
+
+        events.sort()
+        xs = sorted(xs)
+
+        # ---------- First pass: compute total union area ----------
+        st = SegmentTree(xs)
+        total_area = 0
+        prev_y = events[0][0]
+
+        for y, typ, xl, xr in events:
+            dy = y - prev_y
+            total_area += st.covered[0] * dy
+            st.update(xl, xr, 0, st.n - 1, typ, 0)
+            prev_y = y
+
+        half = total_area / 2
+
+        # ---------- Second pass: find minimum y ----------
+        st = SegmentTree(xs)
+        curr_area = 0
+        prev_y = events[0][0]
+
+        for y, typ, xl, xr in events:
+            dy = y - prev_y
+            area_here = st.covered[0] * dy
+
+            if curr_area + area_here >= half:
+                return prev_y + (half - curr_area) / st.covered[0]
+
+            curr_area += area_here
+            st.update(xl, xr, 0, st.n - 1, typ, 0)
+            prev_y = y
+
+        return float(prev_y)
